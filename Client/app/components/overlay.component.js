@@ -38,6 +38,7 @@ var OverlayComponent = (function () {
      * @param form
      */
     OverlayComponent.prototype.onSubmit = function (form) {
+        var _this = this;
         //form.reset();
         this.overviewComponent.closeAddDeviceWindow();
         //TODO Lesen Sie Daten aus der Form aus und übertragen Sie diese an Ihre REST-Schnittstelle
@@ -46,7 +47,9 @@ var OverlayComponent = (function () {
         var options = new http_1.RequestOptions({
             headers: headers
         });
-        this.http.post('http://localhost:8081/overview', value, headers).subscribe(function () { return console.log("success"); }, function (err) { return console.error("Bad"); });
+        this.http.post('http://localhost:8081/overview', value, headers).subscribe(function () { return _this.deviceService.getDevices(); }, //console.log("success"),
+        function (//console.log("success"),
+            err) { return console.error("Bad"); });
         //Added device doesn't need to be persistent!
     };
     OverlayComponent.prototype.isSelected = function (type) {

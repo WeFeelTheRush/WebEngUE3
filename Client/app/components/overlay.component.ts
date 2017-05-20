@@ -61,12 +61,16 @@ export class OverlayComponent implements OnInit {
     });
 
     this.http.post('http://localhost:8081/overview', value, headers).subscribe(
-        () =>   console.log("success"),
+        () =>   this.deviceService.getDevices(),//console.log("success"),
         err => console.error("Bad")
     );
     //Added device doesn't need to be persistent!
 
   }
+
+
+
+
 
   isSelected(type: string): boolean {
     return type == this.device_types[0];
