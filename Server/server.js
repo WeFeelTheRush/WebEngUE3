@@ -36,6 +36,11 @@ router.get('/details/:id', function(req,res){
 })
 app.use('/details/:id',router);
 
+//  device actions
+const DEVICE_CREATED  = "DEVICE_CREATED";
+const DEVICE_UPDATED  = "DEVICE_UPDATED";
+const DEVICE_DELETED  = "DEVICE_DELETED";
+
 //TODO Implementieren Sie hier Ihre REST-Schnittstelle
 /* Ermöglichen Sie wie in der Angabe beschrieben folgende Funktionen:
  *  Abrufen aller Geräte als Liste
@@ -151,11 +156,11 @@ function deleteDevice(id){
   }
 }
 
-//Landing page is login.
+//Landing page is login.  *this is a server-side root route, it probably shouldn't provide any GUI (unless requested)
 app.get('/', function(req,res){
 
-    res.redirect('/login')
-
+    //res.redirect('/login')
+    res.send("Hello From Big Home Backend!");
 });
 
 /*app.get('/login', function(req,res){
@@ -224,18 +229,30 @@ function Device(id, description, display_name, type, type_name){
 };
 */
 app.post('/edit_device', function(req,res){
+
+  var device_id = req.body["id"];
   //console.log(req.body);
   findDevice(req.body["id"]).display_name = req.body["display_name"];
   res.status(200).end();
+
+  informClients(DEVICE_UPDATED, {
+    id: device_id
+  });
 
 });
 
 app.post('/delete_device', function(req,res){
   //console.log(req.body);
+
+  var device_id = req.body["id"];
   console.log(mydevices);
   deleteDevice(req.body["id"]);
   console.log(mydevices);
   res.status(200).end();
+
+  informClients(DEVICE_DELETED, {
+    id: device_id
+  });
 
 });
 
@@ -346,6 +363,12 @@ app.post('/overview', function(req,res){
     res.status(200);
     res.end();
 
+    var device_id = devicetoadd.id;
+
+    informClients(DEVICE_CREATED, {
+      id: device_id
+    });
+
 });
 
 app.post('/details/:id', function(req,res){
@@ -365,11 +388,70 @@ app.post('/details/:id', function(req,res){
   res.status(200).end();
 });
 
+/* web socket endpoint */
+//  config and test
+router.ws('/echo', function(ws, req) {
+  ws.on('message', function(msg) {
+
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === ws.OPEN) {
+        client.send("Hello WS Client!");
+      }
+    });
+
+  });
+  console.log('hello');
+});
+ 
+/* web socket root */
+app.use("/ws-stuff", router);
+
+/* sends message to all web socket clients */
+//  @action type of action successfully carried out on the server
+//  @data   least amount of information necessary in order to identify entity related to the above action
+function informClients(action, data){
+
+  var wss = expressWs.getWss();
+
+    console.log(wss);
+
+    wss.clients.forEach(function each(client) {
+      //if (client.readyState === ws.OPEN) {
+        //client.send(req.body["id"]);
+      //}
+
+      try {
+
+        client.send(JSON.stringify({
+          "action": action,
+          "data": data
+        }));
+
+      } catch(err) {
+
+        console.log(err);
+
+      }
+
+    });
+}
+
+
+/* server init */
 var server = app.listen(8081, function () {
     "use strict";
-    readUser();
-    readDevices();
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log("Big Smart Home Server listening at http://%s:%s", host, port);
+
+    try {
+
+      readUser();
+      readDevices();
+      var host = server.address().address;
+      var port = server.address().port;
+      console.log("Big Smart Home Server listening at http://%s:%s", host, port);
+    
+    } catch(err){
+
+      console.log(err);
+    }
+
 });
