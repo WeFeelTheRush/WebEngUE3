@@ -34,6 +34,7 @@ var BooleanDeviceDetailsComponent = (function () {
      */
     BooleanDeviceDetailsComponent.prototype.onSubmit = function () {
         //TODO Lesen Sie die eingebenen Daten aus und verarbeiten Sie diese über die REST-Schnittstelle
+        var controlUnitOld = this.controlUnit;
         this.doughnutChartData[this.new_value ? 1 : 0]++;
         this.doughnutChartData = Object.assign({}, this.doughnutChartData);
         if (this.log_message != null) {
@@ -45,6 +46,7 @@ var BooleanDeviceDetailsComponent = (function () {
         this.log_message += new Date().toLocaleString() + ": " + (this.controlUnit.current == 1 ? "An" : "Aus") + " -> " + (this.new_value ? "An" : "Aus");
         this.controlUnit.log = this.log_message;
         this.controlUnit.current = this.new_value ? 1 : 0;
+        this.deviceService.postAjaxRequest(this.device, this.controlUnit);
     };
     __decorate([
         core_1.Input(), 

@@ -41,6 +41,22 @@ var DeviceService = (function () {
         return this.getDevices()
             .then(function (devices) { return devices.find(function (device) { return device.id === id; }); });
     };
+    DeviceService.prototype.postAjaxRequest = function (device, controlUnit) {
+        var device_data = device;
+        var device_controlunit = controlUnit;
+        var xhr = new XMLHttpRequest();
+        var method = 'POST';
+        var url = 'http://localhost:8081/details/' + device.id;
+        xhr.open(method, url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        //xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send(JSON.stringify({ id: device.id, c_unit: device_controlunit }));
+    };
     DeviceService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [device_parser_service_1.DeviceParserService, http_1.Http])

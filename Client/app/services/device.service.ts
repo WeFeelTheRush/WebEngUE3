@@ -10,6 +10,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
+import {ControlUnit} from '../model/controlUnit'
+
 
 import 'rxjs/add/operator/toPromise';
 
@@ -43,6 +45,28 @@ export class DeviceService {
     getDevice(id: string): Promise<Device> {
         return this.getDevices()
             .then(devices => devices.find(device => device.id === id));
+    }
+
+    postAjaxRequest(device: Device, controlUnit: ControlUnit){
+      const device_data = device;
+      const device_controlunit = controlUnit;
+
+
+      let xhr = new XMLHttpRequest();
+
+      let method = 'POST';
+      let url = 'http://localhost:8081/details/'+device.id;
+
+      xhr.open(method, url, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      //xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
+          console.log(xhr.responseText);
+        }
+      }
+        xhr.send(JSON.stringify({id:device.id, c_unit:device_controlunit}));
     }
 
 }

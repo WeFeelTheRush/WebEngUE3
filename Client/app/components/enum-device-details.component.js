@@ -52,6 +52,7 @@ var EnumDeviceDetailsComponent = (function () {
         this.controlUnit.log = this.log_message;
         this.polarChartData = _polarChartData;
         this.controlUnit.current = index;
+        this.deviceService.postAjaxRequest(this.device, this.controlUnit);
     };
     EnumDeviceDetailsComponent.prototype.isSelected = function (val) {
         return val == this.controlUnit.values[this.controlUnit.current];

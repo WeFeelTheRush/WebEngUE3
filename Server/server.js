@@ -30,6 +30,11 @@ var noobIdGenerator = 0;
 
 var discrete_values = ["offen", "halb geöffnet", "geschlossen"];
 
+router.get('/details/:id', function(req,res){
+  console.log(req.baseUrl);
+  res.send("Hai!");
+})
+app.use('/details/:id',router);
 
 //TODO Implementieren Sie hier Ihre REST-Schnittstelle
 /* Ermöglichen Sie wie in der Angabe beschrieben folgende Funktionen:
@@ -124,6 +129,15 @@ function findDevice(id){
   for(i =0;i<mydevices.devices.length;i++){
     if(mydevices.devices[i].id == id){
       return mydevices.devices[i];
+    }
+  }
+
+}
+
+function findDeviceIndex(id){
+  for(i =0;i<mydevices.devices.length;i++){
+    if(mydevices.devices[i].id == id){
+      return i;
     }
   }
 
@@ -332,6 +346,23 @@ app.post('/overview', function(req,res){
     res.status(200);
     res.end();
 
+});
+
+app.post('/details/:id', function(req,res){
+  console.log(req.body);
+  //console.log('hey! i am receiving a request!');
+  //console.log(findDeviceIndex(req.body["id"]));
+  //console.log(mydevices.devices[findDeviceIndex(req.body["id"])].control_units);
+  var targetDevice = mydevices.devices[findDeviceIndex(req.body["id"])];
+  for(var i=0;i<targetDevice.control_units.length;i++){
+    if(targetDevice.control_units[i].name === req.body["c_unit"].name){
+      targetDevice.control_units[i] = req.body["c_unit"];
+      break;
+    }
+  }
+  console.log(mydevices.devices[findDeviceIndex(req.body["id"])].control_units);
+
+  res.status(200).end();
 });
 
 var server = app.listen(8081, function () {

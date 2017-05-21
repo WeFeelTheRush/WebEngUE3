@@ -52,6 +52,8 @@ export class EnumDeviceDetailsComponent implements OnInit {
         this.controlUnit.log = this.log_message;
         this.polarChartData = _polarChartData;
         this.controlUnit.current = index;
+
+        this.deviceService.postAjaxRequest(this.device,this.controlUnit);
     }
 
     isSelected(val: string): boolean {

@@ -60,6 +60,7 @@ var ContinuousDeviceDetailsComponent = (function () {
         this.log_message += new Date().toLocaleString() + ": " + this.controlUnit.current + " -> " + this.new_value;
         this.controlUnit.log = this.log_message;
         this.controlUnit.current = this.new_value;
+        this.deviceService.postAjaxRequest(this.device, this.controlUnit);
     };
     __decorate([
         core_1.Input(), 

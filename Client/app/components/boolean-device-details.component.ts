@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Device} from "../model/device";
 import {ControlUnit} from "../model/controlUnit";
 import {DeviceService} from "../services/device.service";
-
+import {Response} from '@angular/http';
 @Component({
     moduleId: module.id,
     selector: 'boolean-details',
@@ -32,7 +32,7 @@ export class BooleanDeviceDetailsComponent implements OnInit {
      */
     onSubmit(): void {
         //TODO Lesen Sie die eingebenen Daten aus und verarbeiten Sie diese über die REST-Schnittstelle
-
+        const controlUnitOld = this.controlUnit;
         this.doughnutChartData[this.new_value ? 1 : 0]++;
         this.doughnutChartData = Object.assign({}, this.doughnutChartData);
 
@@ -45,6 +45,9 @@ export class BooleanDeviceDetailsComponent implements OnInit {
 
         this.controlUnit.log = this.log_message;
         this.controlUnit.current = this.new_value ? 1 : 0;
+
+        this.deviceService.postAjaxRequest(this.device,this.controlUnit);
+
     }
 
     public doughnutChartData: number[] = [0, 0];

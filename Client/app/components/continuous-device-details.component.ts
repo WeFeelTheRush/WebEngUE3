@@ -50,6 +50,8 @@ export class ContinuousDeviceDetailsComponent implements OnInit {
     this.log_message += new Date().toLocaleString() + ": " + this.controlUnit.current + " -> " + this.new_value;
     this.controlUnit.log = this.log_message;
     this.controlUnit.current = this.new_value;
+
+    this.deviceService.postAjaxRequest(this.device,this.controlUnit);
   }
 
   public lineChartData: Array<any> = [
@@ -73,6 +75,3 @@ export class ContinuousDeviceDetailsComponent implements OnInit {
   public lineChartLegend: boolean = true;
   public lineChartType: string = 'line';
 }
-
-
-
