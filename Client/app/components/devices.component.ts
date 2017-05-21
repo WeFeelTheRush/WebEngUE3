@@ -2,6 +2,8 @@ import {Component, OnInit, AfterViewChecked} from '@angular/core';
 import {DeviceService} from "../services/device.service";
 import {Device} from "../model/device";
 
+import { Headers, RequestOptions, Http } from '@angular/http';
+
 declare var $: any;
 
 @Component({
@@ -17,7 +19,7 @@ export class DevicesComponent implements OnInit, AfterViewChecked {
 
     device_num: number = 0;
 
-    constructor(private deviceService: DeviceService) {
+    constructor(private deviceService: DeviceService, private http:Http) {
     }
 
     ngOnInit(): void {
@@ -124,6 +126,17 @@ export class DevicesComponent implements OnInit, AfterViewChecked {
     finishEdit(device: Device): void {
         this.showLabel(device);
         //TODO Lesen Sie den geänderten Anzeigenamen aus und speichern Sie diesen über die REST-Schnittstelle
+        const value = device;
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+
+        const options = new RequestOptions({
+        headers: headers
+        });
+
+        this.http.post('http://localhost:8081/edit_device', value, headers).subscribe(
+          () => this.listDevices(),
+          (err) => console.error("error")
+        );
     }
 
     /**
@@ -132,6 +145,19 @@ export class DevicesComponent implements OnInit, AfterViewChecked {
      */
     removeDevice(device: Device): void {
         //TODO Löschen Sie das angegebene Geräte über die REST-Schnittstelle
+        const value = device;
+
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+
+        const options = new RequestOptions({
+        headers: headers
+        });
+
+        this.http.post('http://localhost:8081/delete_device', value, headers).subscribe(
+          () => this.listDevices(),
+          (err) => console.error("error")
+        );
+
     }
 
     /**

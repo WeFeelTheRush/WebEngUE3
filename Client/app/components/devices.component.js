@@ -10,9 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var device_service_1 = require("../services/device.service");
+var http_1 = require('@angular/http');
 var DevicesComponent = (function () {
-    function DevicesComponent(deviceService) {
+    function DevicesComponent(deviceService, http) {
         this.deviceService = deviceService;
+        this.http = http;
         this.update = true;
         this.device_num = 0;
     }
@@ -104,15 +106,29 @@ var DevicesComponent = (function () {
      * @param device
      */
     DevicesComponent.prototype.finishEdit = function (device) {
+        var _this = this;
         this.showLabel(device);
         //TODO Lesen Sie den geänderten Anzeigenamen aus und speichern Sie diesen über die REST-Schnittstelle
+        var value = device;
+        var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
+        var options = new http_1.RequestOptions({
+            headers: headers
+        });
+        this.http.post('http://localhost:8081/edit_device', value, headers).subscribe(function () { return _this.listDevices(); }, function (err) { return console.error("error"); });
     };
     /**
      * Entfernt das angegebene Gerät
      * @param device
      */
     DevicesComponent.prototype.removeDevice = function (device) {
+        var _this = this;
         //TODO Löschen Sie das angegebene Geräte über die REST-Schnittstelle
+        var value = device;
+        var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
+        var options = new http_1.RequestOptions({
+            headers: headers
+        });
+        this.http.post('http://localhost:8081/delete_device', value, headers).subscribe(function () { return _this.listDevices(); }, function (err) { return console.error("error"); });
     };
     /**
      * Setz das Input-Feld wieder auf ein Label zurück und beendet so das Bearbeiten
@@ -135,7 +151,7 @@ var DevicesComponent = (function () {
             selector: 'my-devices',
             templateUrl: '../views/devices.component.html'
         }), 
-        __metadata('design:paramtypes', [device_service_1.DeviceService])
+        __metadata('design:paramtypes', [device_service_1.DeviceService, http_1.Http])
     ], DevicesComponent);
     return DevicesComponent;
 }());

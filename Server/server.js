@@ -120,6 +120,23 @@ function refreshConnected() {
 
 //app.use(express.static('C:/Users/ardad/OneDrive/TUWIEN/Web Engineering/UE3/lab3/Client/app/views/'));
 
+function findDevice(id){
+  for(i =0;i<mydevices.devices.length;i++){
+    if(mydevices.devices[i].id == id){
+      return mydevices.devices[i];
+    }
+  }
+
+}
+
+function deleteDevice(id){
+  for(i =0;i<mydevices.devices.length;i++){
+    if(mydevices.devices[i].id == id){
+      mydevices.devices.splice(i,1);
+    }
+  }
+}
+
 //Landing page is login.
 app.get('/', function(req,res){
 
@@ -192,7 +209,21 @@ function Device(id, description, display_name, type, type_name){
   primary=""
 };
 */
+app.post('/edit_device', function(req,res){
+  //console.log(req.body);
+  findDevice(req.body["id"]).display_name = req.body["display_name"];
+  res.status(200).end();
 
+});
+
+app.post('/delete_device', function(req,res){
+  //console.log(req.body);
+  console.log(mydevices);
+  deleteDevice(req.body["id"]);
+  console.log(mydevices);
+  res.status(200).end();
+
+});
 
 app.post('/overview', function(req,res){
     //create a new device
