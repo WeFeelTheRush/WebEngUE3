@@ -211,13 +211,44 @@ app.post('/options',upload.array(), function(req,res){
 });
 
 app.post('/login', function(req,res){
-	readUser();
-	if(req.body.username == username && req.body.password == userpassword){
-    res.status(200).end();
-	}else{
-	failed_logins++;
-    res.status(401).end(); //Unauthorized
-	}
+	
+  try {
+
+    readUser();
+    if(req.body.username == username && req.body.password == userpassword){
+
+      var token = jwt.sign({ password: userpassword }, 'secret');
+
+      res
+        .status(200)
+        .send({
+          "success": true,
+          "token": token
+        })
+        .end();
+
+    } else{
+      
+      failed_logins++;
+
+      res
+      .status(401)
+      .send({
+        "success": false
+      })
+      .end(); //Unauthorized
+    }
+
+  } catch(err){
+
+    res
+      .status(401)
+      .send({
+        "success": false
+      })
+      .end();
+  }
+
 });
 
 
@@ -260,15 +291,56 @@ app.post('/edit_device', function(req,res){
 app.post('/delete_device', function(req,res){
   //console.log(req.body);
 
-  var device_id = req.body["id"];
-  console.log(mydevices);
-  deleteDevice(req.body["id"]);
-  console.log(mydevices);
-  res.status(200).end();
+  try {
 
-  informClients(DEVICE_DELETED, {
-    id: device_id
-  });
+    var decoded = req.get('Authorization');
+    console.log(decoded);
+    var pw = jwt.verify(decoded, 'secret');
+    console.log(pw);
+    console.log(userpassword);
+
+    if(pw.password == userpassword){
+
+        var device_id = req.body["id"];
+
+        //console.log(mydevices);
+        deleteDevice(device_id);
+        //console.log(mydevices);
+        
+        res.status(200)
+
+          .send({
+            "message": "Device deleted successfully",
+            "instance": device_id 
+          })
+          .end();
+
+        informClients(DEVICE_DELETED, {
+          id: device_id
+        });
+
+    } else {
+
+      res.status(401)
+
+        .send({
+          "message": "Unauthorized access"
+        })
+
+        .end();
+
+    }
+
+  } catch(err){
+
+    res.status(400)
+
+      .send({
+        "message": "Unknown error"
+      })
+
+      .end();
+  }
 
 });
 
