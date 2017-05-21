@@ -30,6 +30,8 @@ var noobIdGenerator = 0;
 
 var discrete_values = ["offen", "halb geöffnet", "geschlossen"];
 
+var failed_logins = 0;
+
 router.get('/details/:id', function(req,res){
   console.log(req.baseUrl);
   res.send("Hai!");
@@ -91,6 +93,17 @@ app.post("/updateCurrent", function (req, res) {
      *      simulation.updatedDeviceValue(device, control_unit, Number(new_value));
      * Diese Funktion verändert gleichzeitig auch den aktuellen Wert des Gerätes, Sie müssen diese daher nur mit den korrekten Werten aufrufen.
      */
+	 var targetDevice = mydevices.devices[findDeviceIndex(req.body["id"])];
+  for(var i=0;i<targetDevice.control_units.length;i++){
+    if(targetDevice.control_units[i].name === req.body["c_unit"].name){
+      targetDevice.control_units[i] = req.body["c_unit"];
+      break;
+    }
+  }
+  console.log(mydevices.devices[findDeviceIndex(req.body["id"])].control_units);
+
+  res.status(200).end();
+	 
 });
 
 
@@ -163,12 +176,14 @@ app.get('/', function(req,res){
     res.send("Hello From Big Home Backend!");
 });
 
-/*app.get('/login', function(req,res){
+app.get('/login', function(req,res){
 
-	res.sendFile('C:/Users/ardad/OneDrive/TUWIEN/Web Engineering/UE3/lab3/Client/app/views/login.html')
+	res.json(failed_logins);
+	res.status(200).end();
 
 });
 
+/*
 app.get('/options', function(req,res){
 
   res.sendFile('C:/Users/ardad/OneDrive/TUWIEN/Web Engineering/UE3/lab3/Client/app/views/options.html')
@@ -200,6 +215,7 @@ app.post('/login', function(req,res){
 	if(req.body.username == username && req.body.password == userpassword){
     res.status(200).end();
 	}else{
+	failed_logins++;
     res.status(401).end(); //Unauthorized
 	}
 });
@@ -371,22 +387,6 @@ app.post('/overview', function(req,res){
 
 });
 
-app.post('/details/:id', function(req,res){
-  console.log(req.body);
-  //console.log('hey! i am receiving a request!');
-  //console.log(findDeviceIndex(req.body["id"]));
-  //console.log(mydevices.devices[findDeviceIndex(req.body["id"])].control_units);
-  var targetDevice = mydevices.devices[findDeviceIndex(req.body["id"])];
-  for(var i=0;i<targetDevice.control_units.length;i++){
-    if(targetDevice.control_units[i].name === req.body["c_unit"].name){
-      targetDevice.control_units[i] = req.body["c_unit"];
-      break;
-    }
-  }
-  console.log(mydevices.devices[findDeviceIndex(req.body["id"])].control_units);
-
-  res.status(200).end();
-});
 
 /* web socket endpoint */
 //  config and test

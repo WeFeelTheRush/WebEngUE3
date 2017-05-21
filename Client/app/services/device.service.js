@@ -46,7 +46,7 @@ var DeviceService = (function () {
         var device_controlunit = controlUnit;
         var xhr = new XMLHttpRequest();
         var method = 'POST';
-        var url = 'http://localhost:8081/details/' + device.id;
+        var url = 'http://localhost:8081/updateCurrent';
         xhr.open(method, url, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         //xhr.setRequestHeader("Access-Control-Allow-Origin", "*");

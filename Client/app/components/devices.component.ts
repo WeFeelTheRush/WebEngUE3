@@ -134,7 +134,7 @@ export class DevicesComponent implements OnInit, AfterViewChecked {
         });
 
         this.http.post('http://localhost:8081/edit_device', value, headers).subscribe(
-          () => this.listDevices(),
+          () => console.log(),
           (err) => console.error("error")
         );
     }

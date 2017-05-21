@@ -55,7 +55,7 @@ export class DeviceService {
       let xhr = new XMLHttpRequest();
 
       let method = 'POST';
-      let url = 'http://localhost:8081/details/'+device.id;
+      let url = 'http://localhost:8081/updateCurrent';
 
       xhr.open(method, url, true);
       xhr.setRequestHeader("Content-Type", "application/json");
